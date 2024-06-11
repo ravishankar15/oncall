@@ -1,5 +1,6 @@
 from contextlib import suppress
 
+from django.conf import settings
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -106,6 +107,28 @@ class GetChannelVerificationCode(APIView):
 
         code = backend.generate_channel_verification_code(organization)
         return Response(code)
+
+
+class GetMattermostSetupDetails(APIView):
+    authentication_classes = (PluginAuthentication,)
+    permission_classes = (IsAuthenticated, RBACPermission)
+
+    rbac_permissions = {
+        "get": [RBACPermission.Permissions.INTEGRATIONS_WRITE],
+    }
+
+    def get(self, request):
+        organization = request.auth.organization
+        user = request.user
+        from apps.mattermost.models import MattermostAuthToken
+
+        with suppress(MattermostAuthToken.DoesNotExist):
+            existing_auth_token = organization.mattermost_auth_token
+            existing_auth_token.delete()
+        _, auth_token = MattermostAuthToken.create_auth_token(user=user, organization=organization)
+        manifest_link = f"{settings.BASE_URL}/mattermost/manifest?auth_token={auth_token}"
+
+        return Response({"manifest_link": manifest_link})
 
 
 class SetGeneralChannel(APIView):
