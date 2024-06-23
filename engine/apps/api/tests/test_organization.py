@@ -219,6 +219,30 @@ def test_organization_get_channel_verification_code_ok(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    "role,expected_status",
+    [
+        (LegacyAccessControlRole.ADMIN, status.HTTP_200_OK),
+        (LegacyAccessControlRole.EDITOR, status.HTTP_403_FORBIDDEN),
+        (LegacyAccessControlRole.VIEWER, status.HTTP_403_FORBIDDEN),
+        (LegacyAccessControlRole.NONE, status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_organization_get_mattermost_setup_details(
+    make_organization_and_user_with_plugin_token,
+    make_user_auth_headers,
+    role,
+    expected_status,
+):
+    _, tester, token = make_organization_and_user_with_plugin_token(role)
+    client = APIClient()
+    url = reverse("api-internal:api-get-mattermost-setup-details")
+    response = client.get(url, format="json", **make_user_auth_headers(tester, token))
+
+    assert response.status_code == expected_status
+
+
+@pytest.mark.django_db
 def test_organization_get_channel_verification_code_invalid(
     make_organization_and_user_with_plugin_token,
     make_user_auth_headers,

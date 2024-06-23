@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -29,16 +30,16 @@ class GetMattermostManifest(APIView):
 
     def _build_manifest(self, auth_token: str) -> dict:
         return {
-            "app_id": "Grafana-Oncall",
+            "app_id": "Grafana-OnCall",
             "version": "1.0.0",
-            "display_name": "Grafana Oncall",
-            "description": "Grafana Oncall app for sending and receiving events from mattermost",
+            "display_name": "Grafana OnCall",
+            "description": "Grafana OnCall app for sending and receiving events from mattermost",
             "homepage_url": "https://grafana.com/docs/oncall/latest/",
             "requested_permissions": ["act_as_bot"],
             "requested_locations": ["/in_post", "/post_menu", "/command"],
             "on_install": self._build_on_install_callback(auth_token=auth_token),
             "bindings": self._build_bindings_callback(auth_token=auth_token),
-            "http": {"root_url": "http://host.docker.internal:8080"},
+            "http": {"root_url": settings.BASE_URL},
         }
 
 
