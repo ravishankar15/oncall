@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.base.utils import live_settings
 from apps.mattermost.auth import MattermostAuthTokenAuthentication, MattermostWebhookAuthTokenAuthentication
 
 MATTERMOST_CONNECTED_TEXT = (
@@ -39,7 +40,7 @@ class GetMattermostManifest(APIView):
             "requested_locations": ["/in_post", "/post_menu", "/command"],
             "on_install": self._build_on_install_callback(auth_token=auth_token),
             "bindings": self._build_bindings_callback(auth_token=auth_token),
-            "http": {"root_url": settings.BASE_URL},
+            "http": {"root_url": live_settings.MATTERMOST_WEBHOOK_HOST},
         }
 
 

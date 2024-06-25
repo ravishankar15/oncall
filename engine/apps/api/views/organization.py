@@ -1,6 +1,5 @@
 from contextlib import suppress
 
-from django.conf import settings
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,6 +9,7 @@ from apps.api.permissions import RBACPermission
 from apps.api.serializers.organization import CurrentOrganizationConfigChecksSerializer, CurrentOrganizationSerializer
 from apps.auth_token.auth import PluginAuthentication
 from apps.base.messaging import get_messaging_backend_from_id
+from apps.base.utils import live_settings
 from apps.mobile_app.auth import MobileAppAuthTokenAuthentication
 from apps.telegram.client import TelegramClient
 from common.insight_log import EntityEvent, write_resource_insight_log
@@ -118,7 +118,7 @@ class GetMattermostSetupDetails(APIView):
     }
 
     def _create_engine_url(self, auth_token) -> str:
-        return f"{settings.BASE_URL}/mattermost/manifest?auth_token={auth_token}"
+        return f"{live_settings.MATTERMOST_WEBHOOK_HOST}/mattermost/manifest?auth_token={auth_token}"
 
     def get(self, request):
         organization = request.auth.organization
