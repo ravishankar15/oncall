@@ -69,27 +69,38 @@ const MattermostModal = (props: MattermostModalProps) => {
   return (
     <Modal title="Setup Mattermost" closeOnEscape isOpen onDismiss={onUpdate}>
       <VerticalGroup spacing="md">
-        <Block withBackground bordered className={cx('mattermost-block')}>
-          <Text type="secondary">
-            Use the following link for the manifest file
-            <Field className={cx('field-command')}>
-              <Input
-                id="mattermostManifestLink"
-                value={manifestLink}
-                suffix={
-                  <CopyToClipboard
-                    text={manifestLink}
-                    onCopy={() => {
-                      openNotification('Link is copied')
-                    }}
-                  >
-                    <Icon name="copy"/>
-                  </CopyToClipboard>
-                }
-              />
-            </Field>
-          </Text>
-        </Block>
+        <Text type="secondary">
+          We need to install the Grafana OnCall app in our mattermost instance.
+        </Text>
+        <Text.Title level={5}>Install App</Text.Title>
+        <Text type="secondary">
+          1. Open Mattermost, Using Apps framework command type <Text type="primary">/apps install http [ManifestURL]</Text>
+        </Text>
+        <Text type="secondary">
+          ManifestURL
+          <Field className={cx('field-command')}>
+            <Input
+              id="mattermostManifestLink"
+              value={manifestLink}
+              suffix={
+                <CopyToClipboard
+                  text={manifestLink}
+                  onCopy={() => {
+                    openNotification('Link is copied')
+                  }}
+                >
+                  <Icon name="copy"/>
+                </CopyToClipboard>
+              }
+            />
+          </Field>
+        </Text>
+        <Text type="secondary">
+          2. Enable checkbox <Text type="primary">Agree to grant the app access to APIs and Locations</Text>
+        </Text>
+        <Text type="secondary">
+          3. Choose <Text type="primary">Submit</Text>
+        </Text>
         <HorizontalGroup justify="flex-end">
           <Button variant="secondary" onClick={onHide}>
             Cancel
