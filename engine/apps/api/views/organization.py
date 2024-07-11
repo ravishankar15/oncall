@@ -117,9 +117,6 @@ class GetMattermostSetupDetails(APIView):
         "get": [RBACPermission.Permissions.INTEGRATIONS_WRITE],
     }
 
-    def _create_engine_url(self, auth_token) -> str:
-        return f"{live_settings.MATTERMOST_WEBHOOK_HOST}/mattermost/manifest?auth_token={auth_token}"
-
     def get(self, request):
         organization = request.auth.organization
         user = request.user
@@ -129,9 +126,9 @@ class GetMattermostSetupDetails(APIView):
             existing_auth_token = organization.mattermost_auth_token
             existing_auth_token.delete()
         _, auth_token = MattermostAuthToken.create_auth_token(user=user, organization=organization)
-        manifest_link = self._create_engine_url(auth_token=auth_token)
+        manifest_link = f"{live_settings.MATTERMOST_WEBHOOK_HOST}/mattermost/manifest"
 
-        return Response({"manifest_link": manifest_link})
+        return Response({"manifest_link": manifest_link, "jwt_token": auth_token})
 
 
 class SetGeneralChannel(APIView):

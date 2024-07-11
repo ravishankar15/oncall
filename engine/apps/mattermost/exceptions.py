@@ -1,0 +1,2 @@
+class MattermostTokenError(Exception):
+    pass

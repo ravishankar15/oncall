@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.base.utils import live_settings
-from apps.mattermost.auth import MattermostAuthTokenAuthentication, MattermostWebhookAuthTokenAuthentication
+from apps.mattermost.auth import MattermostAuthTokenAuthentication
 
 MATTERMOST_CONNECTED_TEXT = (
     "Done! <b>{app_id}</b> Successfully Installed and Linked with organization <b>{organization_title} 🎉</b>"
@@ -12,24 +12,21 @@ MATTERMOST_CONNECTED_TEXT = (
 
 
 class GetMattermostManifest(APIView):
-    authentication_classes = (MattermostAuthTokenAuthentication,)
 
     def get(self, request):
-        auth_token = request.query_params.get("auth_token")
-        manifest = self._build_manifest(auth_token)
+        manifest = self._build_manifest()
         return Response(manifest, status=status.HTTP_200_OK)
 
-    def _build_on_install_callback(self, auth_token: str) -> dict:
+    def _build_on_install_callback(self) -> dict:
         return {
             "path": "/mattermost/install",
             "expand": {"app": "summary", "acting_user": "summary"},
-            "state": {"auth_token": auth_token},
         }
 
-    def _build_bindings_callback(self, auth_token: str) -> dict:
-        return {"path": "/mattermost/bindings", "state": {"auth_token": auth_token}}
+    def _build_bindings_callback(self) -> dict:
+        return {"path": "/mattermost/bindings"}
 
-    def _build_manifest(self, auth_token: str) -> dict:
+    def _build_manifest(self) -> dict:
         return {
             "app_id": "Grafana-OnCall",
             "version": "1.0.0",
@@ -38,14 +35,14 @@ class GetMattermostManifest(APIView):
             "homepage_url": "https://grafana.com/docs/oncall/latest/",
             "requested_permissions": ["act_as_bot"],
             "requested_locations": ["/in_post", "/post_menu", "/command"],
-            "on_install": self._build_on_install_callback(auth_token=auth_token),
-            "bindings": self._build_bindings_callback(auth_token=auth_token),
-            "http": {"root_url": live_settings.MATTERMOST_WEBHOOK_HOST},
+            "on_install": self._build_on_install_callback(),
+            "bindings": self._build_bindings_callback(),
+            "http": {"root_url": live_settings.MATTERMOST_WEBHOOK_HOST, "use_jwt": True},
         }
 
 
 class MattermostInstall(APIView):
-    authentication_classes = (MattermostWebhookAuthTokenAuthentication,)
+    authentication_classes = (MattermostAuthTokenAuthentication,)
 
     def post(self, request):
         app_id = request.data.get("context").get("app").get("app_id")
@@ -58,7 +55,7 @@ class MattermostInstall(APIView):
 
 
 class MattermostBindings(APIView):
-    authentication_classes = (MattermostWebhookAuthTokenAuthentication,)
+    authentication_classes = (MattermostAuthTokenAuthentication,)
 
     def post(self, request):
         # TODO: Implement bindings or slash commands
