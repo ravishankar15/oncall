@@ -1,0 +1,2 @@
+class MattermostAPITokenInvalid(Exception):
+    pass
