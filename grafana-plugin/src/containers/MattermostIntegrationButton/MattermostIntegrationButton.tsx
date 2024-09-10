@@ -25,8 +25,12 @@ export const MattermostIntegrationButton = observer((props: MattermostIntegratio
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const onCreateModalCallback = useCallback(() => {
+  const onModalCreateCallback = useCallback(() => {
     setShowModal(true);
+  }, []);
+
+  const onModalCancelCallback = useCallback(() => {
+    setShowModal(false);
   }, []);
 
   const onModalUpdateCallback = useCallback(() => {
@@ -38,11 +42,11 @@ export const MattermostIntegrationButton = observer((props: MattermostIntegratio
   return (
     <>
       <WithPermissionControlTooltip userAction={UserActions.IntegrationsWrite}>
-        <Button size={size} variant="primary" icon="plus" disabled={disabled} onClick={onCreateModalCallback}>
+        <Button size={size} variant="primary" icon="plus" disabled={disabled} onClick={onModalCreateCallback}>
           Add Mattermost channel
         </Button>
       </WithPermissionControlTooltip>
-      {showModal && <MattermostChannelForm onHide={onCreateModalCallback} onUpdate={onModalUpdateCallback} />}
+      {showModal && <MattermostChannelForm onHide={onModalCancelCallback} onUpdate={onModalUpdateCallback} />}
     </>
   );
 });
@@ -86,7 +90,7 @@ const MattermostChannelForm = (props: MattermostCreationModalProps) => {
               <Button variant="secondary" onClick={() => onHide()}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={!teamName} variant="primary">
+              <Button type="submit" disabled={!teamName || !channelName} variant="primary">
                 Create
               </Button>
             </HorizontalGroup>
