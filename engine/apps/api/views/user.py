@@ -719,6 +719,7 @@ class UserView(
         backend_id = request.query_params.get("backend")
         backend = get_messaging_backend_from_id(backend_id)
         if backend is None:
+            print("Backend Not Found")
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -731,6 +732,7 @@ class UserView(
                 linked_user_id=user.public_primary_key,
             )
         except ObjectDoesNotExist:
+            print("Object Not Found")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_200_OK)
 

@@ -56,6 +56,7 @@ export const UserSettings = observer(({ id, onHide, tab = UserSettingsTab.UserIn
     showMobileAppConnectionTab,
     showMsTeamsConnectionTab,
     showGoogleCalendarTab,
+    showMattermostConnectionTab,
   ] = [
     !isDesktopOrLaptop,
     isCurrent && organizationStore.currentOrganization?.slack_team_identity && !storeUser.slack_user_identity,
@@ -63,6 +64,7 @@ export const UserSettings = observer(({ id, onHide, tab = UserSettingsTab.UserIn
     isCurrent,
     store.hasFeature(AppFeature.MsTeams) && !storeUser.messaging_backends.MSTEAMS,
     isCurrent && store.hasFeature(AppFeature.GoogleOauth2),
+    isCurrent && store.hasFeature(AppFeature.Mattermost) && !storeUser.messaging_backends.MATTERMOST,
   ];
 
   const title = (
@@ -84,6 +86,7 @@ export const UserSettings = observer(({ id, onHide, tab = UserSettingsTab.UserIn
             showMobileAppConnectionTab={showMobileAppConnectionTab}
             showMsTeamsConnectionTab={showMsTeamsConnectionTab}
             showGoogleCalendarTab={showGoogleCalendarTab}
+            showMattermostConnectionTab={showMattermostConnectionTab}
           />
           <TabsContent id={id} activeTab={activeTab} onTabChange={onTabChange} isDesktopOrLaptop={isDesktopOrLaptop} />
         </div>

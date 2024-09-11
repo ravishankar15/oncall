@@ -26,6 +26,13 @@ class MattermostChannel:
     display_name: str
 
 
+@dataclass
+class MattermostUser:
+    user_id: str
+    username: str
+    nickname: str
+
+
 class MattermostClient:
     def __init__(self, token: Optional[str] = None) -> None:
         self.token = token or live_settings.MATTERMOST_BOT_TOKEN
@@ -68,3 +75,10 @@ class MattermostClient:
         return MattermostChannel(
             channel_id=data["id"], team_id=data["team_id"], channel_name=data["name"], display_name=data["display_name"]
         )
+
+    def get_current_user_details(self):
+        url = f"{self.base_url}/users/me"
+        response = requests.get(url=url, timeout=self.timeout, auth=TokenAuth(self.token))
+        self._check_response(response)
+        data = response.json()
+        return MattermostUser(user_id=data["id"], username=data["username"], nickname=data["nickname"])

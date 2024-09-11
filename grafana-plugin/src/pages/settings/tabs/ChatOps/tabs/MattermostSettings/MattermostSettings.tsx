@@ -28,7 +28,7 @@ class MattermostSettings extends Component<MattermostProps, MattermostState> {
   handleOpenMattermostInstructions = async () => {
     const { store } = this.props;
     try {
-      await store.mattermostStore.installMattermostIntegration();
+      await store.mattermostStore.mattermostLogin();
     } catch (err) {
       showApiError(err);
     }

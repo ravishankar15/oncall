@@ -12,6 +12,7 @@ import { SlackTab } from 'containers/UserSettings/parts/tabs//SlackTab/SlackTab'
 import { CloudPhoneSettings } from 'containers/UserSettings/parts/tabs/CloudPhoneSettings/CloudPhoneSettings';
 import { GoogleCalendar } from 'containers/UserSettings/parts/tabs/GoogleCalendar/GoogleCalendar';
 import { MSTeamsInfo } from 'containers/UserSettings/parts/tabs/MSTeamsInfo/MSTeamsInfo';
+import { MattermostInfo } from 'containers/UserSettings/parts/tabs/MattermostInfo/MattermostInfo';
 import { NotificationSettingsTab } from 'containers/UserSettings/parts/tabs/NotificationSettingsTab';
 import { PhoneVerification } from 'containers/UserSettings/parts/tabs/PhoneVerification/PhoneVerification';
 import { TelegramInfo } from 'containers/UserSettings/parts/tabs/TelegramInfo/TelegramInfo';
@@ -34,6 +35,7 @@ interface TabsProps {
   showSlackConnectionTab: boolean;
   showTelegramConnectionTab: boolean;
   showMsTeamsConnectionTab: boolean;
+  showMattermostConnectionTab: boolean;
 }
 
 export const Tabs = ({
@@ -45,6 +47,7 @@ export const Tabs = ({
   showSlackConnectionTab,
   showTelegramConnectionTab,
   showMsTeamsConnectionTab,
+  showMattermostConnectionTab,
 }: TabsProps) => {
   const getTabClickHandler = useCallback(
     (tab: UserSettingsTab) => {
@@ -125,6 +128,15 @@ export const Tabs = ({
           data-testid="tab-msteams"
         />
       )}
+      {showMattermostConnectionTab && (
+        <Tab
+          active={activeTab === UserSettingsTab.MattermostInfo}
+          label="Mattermost Connection"
+          key={UserSettingsTab.MattermostInfo}
+          onChangeTab={getTabClickHandler(UserSettingsTab.MattermostInfo)}
+          data-testid="tab-mattermost"
+        />
+      )}
     </TabsBar>
   );
 };
@@ -170,6 +182,7 @@ export const TabsContent = observer(({ id, activeTab, onTabChange, isDesktopOrLa
       {activeTab === UserSettingsTab.SlackInfo && <SlackTab />}
       {activeTab === UserSettingsTab.TelegramInfo && <TelegramInfo />}
       {activeTab === UserSettingsTab.MSTeamsInfo && <MSTeamsInfo />}
+      {activeTab === UserSettingsTab.MattermostInfo && <MattermostInfo />}
     </TabContent>
   );
 
