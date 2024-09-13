@@ -76,8 +76,8 @@ class MattermostClient:
             channel_id=data["id"], team_id=data["team_id"], channel_name=data["name"], display_name=data["display_name"]
         )
 
-    def get_current_user_details(self):
-        url = f"{self.base_url}/users/me"
+    def get_user(self, user_id: str = "me"):
+        url = f"{self.base_url}/users/{user_id}"
         response = requests.get(url=url, timeout=self.timeout, auth=TokenAuth(self.token))
         self._check_response(response)
         data = response.json()

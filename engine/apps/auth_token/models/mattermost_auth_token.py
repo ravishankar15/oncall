@@ -14,8 +14,6 @@ def get_expire_date():
 
 
 class MattermostAuthToken(BaseAuthToken):
-    objects: models.Manager["MattermostAuthToken"]
-
     user = models.OneToOneField("user_management.User", related_name="mattermost_auth_token", on_delete=models.CASCADE)
     organization = models.ForeignKey(
         "user_management.Organization", related_name="mattermost_auth_token_set", on_delete=models.CASCADE
@@ -24,6 +22,10 @@ class MattermostAuthToken(BaseAuthToken):
 
     @classmethod
     def create_auth_token(cls, user: User, organization: Organization) -> Tuple["MattermostAuthToken", str]:
+        old_token = cls.objects_with_deleted.filter(user=user)
+        if old_token.exists():
+            old_token.delete()
+
         token_string = crypto.generate_token_string()
         digest = crypto.hash_token_string(token_string)
 
@@ -33,6 +35,4 @@ class MattermostAuthToken(BaseAuthToken):
             user=user,
             organization=organization,
         )
-        print(instance.expire_date)
-        print(f"Token: {token_string}")
         return instance, token_string

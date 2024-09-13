@@ -9,6 +9,9 @@ from apps.auth_token.constants import MATTERMOST_AUTH_TOKEN_NAME, SLACK_AUTH_TOK
 from apps.auth_token.models import GoogleOAuth2Token, MattermostAuthToken, SlackAuthToken
 from apps.base.utils import live_settings
 from apps.mattermost.client import MattermostClient
+from apps.mattermost.exceptions import MattermostAPIException, MattermostAPITokenInvalid
+
+from .exceptions import UserLoginOAuth2MattermostException
 
 # Scopes for slack user token.
 # It is main purpose - retrieve user data in SlackOAuth2V2 but we are using it in legacy code or weird Slack api cases.
@@ -249,8 +252,13 @@ class LoginMattermostOAuth2(BaseOAuth2):
         return response
 
     def user_data(self, access_token, *args, **kwargs):
-        client = MattermostClient(token=access_token)
-        user = client.get_current_user_details()
+        try:
+            client = MattermostClient(token=access_token)
+            user = client.get_user()
+        except (MattermostAPITokenInvalid, MattermostAPIException) as ex:
+            raise UserLoginOAuth2MattermostException(
+                f"Error while trying to fetch mattermost user: {ex.msg} status: {ex.status}"
+            )
         response = {}
         response["user"] = {}
         response["user"]["user_id"] = user.user_id

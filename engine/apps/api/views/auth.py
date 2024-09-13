@@ -25,7 +25,7 @@ from apps.chatops_proxy.utils import (
     get_slack_oauth_response_from_chatops_proxy,
 )
 from apps.slack.installation import install_slack_integration
-from apps.social_auth.backends import SLACK_INSTALLATION_BACKEND, LoginSlackOAuth2V2, LoginMattermostOAuth2
+from apps.social_auth.backends import SLACK_INSTALLATION_BACKEND, LoginMattermostOAuth2, LoginSlackOAuth2V2
 
 logger = logging.getLogger(__name__)
 

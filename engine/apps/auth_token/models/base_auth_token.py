@@ -40,5 +40,4 @@ class BaseAuthToken(models.Model):
                 raise InvalidToken
             if compare_digest(digest, auth_token.digest):
                 return auth_token
-        print(f"Token is validated {token}")
         raise InvalidToken
