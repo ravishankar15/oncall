@@ -50,7 +50,6 @@ def _notification_channel_choices():
     # Do not remove items from this enum if you just want to disable a notification channel temporarily,
     # use NotificationChannelOptions.AVAILABLE_FOR_USE instead.
     supported_backends = list(BUILT_IN_BACKENDS)
-
     for backend_id, backend in get_messaging_backends():
         supported_backends.append((backend_id, backend.notification_channel_id))
 
